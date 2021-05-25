@@ -18,14 +18,15 @@ import time
 
 import requests, xmltodict, json
 
+from PIL import Image, ImageTk
 
 class GUI:
-    sibal = "sibal"
-
     def __init__(self):
         self.window = tkinter.Tk()
         self.window.title("안심식당")
-        self.window.geometry("700x700+300+100")  #너비 x 높이  + 시작x + 시작y
+        self.window.geometry("700x700+300+50")  # 너비 x 높이  + 시작x + 시작y
+        self.window.configure(bg = 'light green')
+        self.title()
         self.entry()
         self.searchValues()
         self.searchDetailValues(['시/군/구'])
@@ -36,8 +37,15 @@ class GUI:
         self.searchList()
         self.window.mainloop()
 
+    def title(self):
+        img = Image.open('image\icon.jpg')
+        img = img.resize((100, 100), Image.ANTIALIAS)
+        self.icon = ImageTk.PhotoImage(img)
+        Label(self.window, image = self.icon).place(x = 50, y = 5)
+        Label(self.window, text = "안심식당", width = 10, height = 1, font = ("Arial", 20, "italic")).place(x = 250, y = 5)
+
     def entry(self):
-        self.entry = tkinter.Entry(self.window, width=50, borderwidth=3, bg='light blue')
+        self.entry = tkinter.Entry(self.window, width=25, borderwidth=10, font = ("TkDefaultFont", 16), bg='light yellow')
         self.entry.insert(0, "음식점 이름을 입력하세요")
         self.entry.place(x=50, y=60)
 
@@ -54,8 +62,6 @@ class GUI:
 
         self.scrollbar["command"]=self.listbox.yview
         self.frame.place(x=10, y=255)
-
-
 
 
 
@@ -108,6 +114,7 @@ class GUI:
     def searchDetailValues(self, detailValues):
         self.detailValuesStr = StringVar()
         self.detailValuesStr = "시/군/구"
+
         if detailValues == '서울특별시':
             self.detailValues =  ['강남구', '강동구', '강북구', '강서구', '관악구', '광진구', '구로구', '금천구', '노원구', '도봉구', '동대문구', '동작구'
                        '마포구', '서대문구', '서초구', '성동구', '성북구', '송파구', '양천구', '영등포구', '용산구', '은평구', '종로구', '중구', '중랑구']
@@ -227,6 +234,7 @@ class GUI:
         self.valuesStr ='시/도'
         self.combo1.set(self.valuesStr)
         self.detailValuesStr ='시/군/구'
+        self.searchDetailValues(self.valuesStr)
         self.combo2.set(self.detailValuesStr)
         self.categoryValuesStr ='업종상세'
         self.combo3.set(self.categoryValuesStr)
