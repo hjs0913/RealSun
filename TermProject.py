@@ -24,7 +24,7 @@ class GUI:
     def __init__(self):
         self.window = tkinter.Tk()
         self.window.title("안심식당")
-        self.window.geometry("700x700+300+50")  # 너비 x 높이  + 시작x + 시작y
+        self.window.geometry("640x570+300+50")  # 너비 x 높이  + 시작x + 시작y
         self.window.configure(bg = 'light green')
         self.title()
         self.entry()
@@ -41,36 +41,81 @@ class GUI:
         img = Image.open('image\icon.jpg')
         img = img.resize((100, 100), Image.ANTIALIAS)
         self.icon = ImageTk.PhotoImage(img)
-        Label(self.window, image = self.icon).place(x = 50, y = 5)
-        Label(self.window, text = "안심식당", width = 10, height = 1, font = ("Arial", 20, "italic")).place(x = 250, y = 5)
+        Label(self.window, image = self.icon).place(x = 20, y = 20)
+        Label(self.window, text = "안심식당", width = 8, height = 1, font = ("맑은 고딕", 20, "italic", "bold"), bg = 'light green').place(x = 130, y = 25)
 
     def entry(self):
-        self.entry = tkinter.Entry(self.window, width=25, borderwidth=10, font = ("TkDefaultFont", 16), bg='light yellow')
+        self.entry = tkinter.Entry(self.window, width=26, borderwidth=10, font = ("TkDefaultFont", 14), bg='mint cream')
         self.entry.insert(0, "음식점 이름을 입력하세요")
-        self.entry.place(x=50, y=60)
+        self.entry.place(x=140, y= 80)
+        # self.entry.bind("<Enter>", lambda e: self.entry.delete(0, END), self.entry.insert(0, ''))
+        self.entry.bind("<Button-1>", lambda e: self.entry.delete(0, END))
+        # self.entry.bind("<Leave>", lambda e: self.entry.insert(0, '음식점 이름을 입력하세요'))
+
+    def button(self):
+        #버튼
+        #검색버튼
+        self.button = tkinter.Button(self.window, text = '검색', command = self.search, width=10, height = 1, borderwidth= 5, bg = 'light yellow')
+        self.button.place(x=440,y=85)
+        #초기화 버튼
+        img5 = Image.open('image\\refreshing.png')
+        img5 = img5.resize((20, 20), Image.ANTIALIAS)
+        self.refreshIcon = ImageTk.PhotoImage(img5)
+        self.button2 = tkinter.Button(self.window, text = '초기화', command = self.reset, width=30, height = 20, borderwidth= 5, image = self.refreshIcon, bg = 'light yellow')
+        self.button2.place(x=540,y=85)
+        #추천메뉴 버튼
+        self.button3 = tkinter.Button(self.window, text = '추천메뉴', command = self.recommand, width=10, height = 1, borderwidth= 5,bg = 'light yellow' )
+        self.button3.place(x=108,y=190)
+        #메일 버튼
+        img1 = Image.open('image\gmail.png')
+        img1 = img1.resize((30, 30), Image.ANTIALIAS)
+        self.gmailIcon = ImageTk.PhotoImage(img1)
+        self.button4 = tkinter.Button(self.window, text = '메일', command = self.mail, width=30, height = 30, borderwidth= 3, image = self.gmailIcon ,bg = 'light yellow')
+        self.button4.place(x=370,y=190)
+        #지도 버튼
+        img2 = Image.open('image\map.png')
+        img2 = img2.resize((30, 30), Image.ANTIALIAS)
+        self.mapIcon = ImageTk.PhotoImage(img2)
+        self.button5 = tkinter.Button(self.window, text = '지도', command = self.map, width=30, height = 30, borderwidth= 3, image = self.mapIcon ,bg = 'light yellow')
+        self.button5.place(x=465,y=190)
+        #텔레그램 버튼
+        img3 = Image.open('image\\telegram.png')
+        img3 = img3.resize((30, 30), Image.ANTIALIAS)
+        self.telegramIcon = ImageTk.PhotoImage(img3)
+        self.button5 = tkinter.Button(self.window, text='텔레그램', command=self.map, width=30, height=30, borderwidth=3, image=self.telegramIcon,bg = 'light yellow')
+        self.button5.place(x=560, y=190)
+        #결과리스트 출력버튼
+        img4 = Image.open('image\\rightarrow.png')
+        img4 = img4.resize((23, 23), Image.ANTIALIAS)
+        self.rightIcon = ImageTk.PhotoImage(img4)
+        self.button6 = tkinter.Button(self.window, text='->', command=self.listPrint, width=20, height=20, borderwidth=3, image = self.rightIcon,bg = 'light yellow')
+        self.button6.place(x=300, y=380)
+
+    def listName(self):
+        self.label = tkinter.Label(self.window, text="목록", width=10, height=1, font = ("Arial", 14, "bold"), bg = 'light green')
+        self.label.place(x=85, y=230)
+        self.label2 = tkinter.Label(self.window, text="검색결과", width=10, height=1 , font = ("Arial", 14, "bold"), bg = 'light green')
+        self.label2.place(x=420, y=230)
 
     def searchList(self):
-        #목록1 -> 검색결과 리스트 박스
+        # 목록1 -> 검색결과 리스트 박스
         self.frame = tkinter.Frame(self.window)
 
-        self.scrollbar=tkinter.Scrollbar(self.frame)
+        self.scrollbar = tkinter.Scrollbar(self.frame)
         self.scrollbar.pack(side="right", fill="y")
 
-        self.listbox = tkinter.Listbox(self.frame, selectmode='extended', width= 42, height=25,yscrollcommand = self.scrollbar.set)
-
+        self.listbox = tkinter.Listbox(self.frame, selectmode='extended', width=35, height=17,
+                                       yscrollcommand=self.scrollbar.set, bg='mint cream')
         self.listbox.pack(side="left")
-
-        self.scrollbar["command"]=self.listbox.yview
-        self.frame.place(x=10, y=255)
-
-
+        self.scrollbar["command"] = self.listbox.yview
+        self.frame.place(x=20, y=255)
 
     def resultText(self):
         self.frame2 = tkinter.Frame(self.window)
 
         self.scrollbar2 = tkinter.Scrollbar(self.frame2)
         self.scrollbar2.pack(side="right", fill="y")
-        self.text = tkinter.Text(self.frame2, width=40, height=31, yscrollcommand = self.scrollbar2.set)
+        self.text = tkinter.Text(self.frame2, width=35, height= 21, yscrollcommand=self.scrollbar2.set, bg='mint cream')
 
         self.text.insert(tkinter.CURRENT, "")
 
@@ -79,17 +124,7 @@ class GUI:
         self.text.tag_config("강조", background="yellow")
         self.text.tag_remove("강조", "1.1", "1.2")
         self.scrollbar2["command"] = self.text.yview
-        self.frame2.place(x=390, y=255)
-
-    def listName(self):
-        self.label = tkinter.Label(self.window, text="목록", width=10, height=1)
-
-        self.label.place(x=120, y=230)
-
-        self.label2 = tkinter.Label(self.window, text="검색결과", width=10, height=1)
-
-        self.label2.place(x=490, y=230)
-
+        self.frame2.place(x=350, y=258)
 
     def selectValues(self, event):
         self.valuesStr = self.combo1.get()
@@ -105,8 +140,8 @@ class GUI:
                        '경상북도', '경상남도','제주특별자치도']
 
         self.TempFont = font.Font(self.window, size=15, weight='bold', family='Consolas')
-        self.combo1 = tkinter.ttk.Combobox( self.window, textvariable = self.valuesStr, font=self.TempFont,width = 15,height = 50, values= self.values)
-        self.combo1.place(x = 50, y = 130)
+        self.combo1 = tkinter.ttk.Combobox( self.window, textvariable = self.valuesStr, font=self.TempFont,width = 13,height = 50, values= self.values)
+        self.combo1.place(x = 30, y = 140)
         self.combo1.set(self.valuesStr)
         self.combo1.bind('<<ComboboxSelected>>', self.selectValues)
 
@@ -161,9 +196,9 @@ class GUI:
         else:
             self.detailValues = ['시/도를 선택하세요!']
 
-        self.combo2 = tkinter.ttk.Combobox(self.window, textvariable=self.detailValuesStr, font=self.TempFont, width=15,
+        self.combo2 = tkinter.ttk.Combobox(self.window, textvariable=self.detailValuesStr, font=self.TempFont, width=13,
                                            height=50, values=self.detailValues)
-        self.combo2.place(x=250, y=130)
+        self.combo2.place(x=230, y=140)
         self.combo2.set(self.detailValuesStr)
 
 
@@ -173,8 +208,8 @@ class GUI:
         # categoryValues : 한식/중식/일식/양식/기타  (기타 : 베트남음식, 필리핀음식 등등 확실하게 알기 어려운 것)
         self.categoryValues = ['한식', '중식', '일식', '서양식', '기타외국식', '기타 음식점업']
 
-        self.combo3 = tkinter.ttk.Combobox(self.window, textvariable = self.categoryValuesStr,  font=self.TempFont, width = 15, height = 50, values = self.categoryValues)
-        self.combo3.place(x = 450, y=130)
+        self.combo3 = tkinter.ttk.Combobox(self.window, textvariable = self.categoryValuesStr,  font=self.TempFont, width = 13, height = 50, values = self.categoryValues)
+        self.combo3.place(x = 430, y=140)
         self.combo3.set(self.categoryValuesStr)
 
 
@@ -200,6 +235,7 @@ class GUI:
         elif(self.valuesStr == '시/도' and self.detailValuesStr == '시/군/구' and self.categoryValuesStr == '업종상세'):
             parme =""
 
+
         url = url + parme
         content = requests.get(url).content
         dic = xmltodict.parse(content)
@@ -220,7 +256,7 @@ class GUI:
                     self.box2.append("\n\n주소: " + item['RELAX_ADD1'] + "\n\n" + "업종: " + item['RELAX_GUBUN_DETAIL'] + "\n\n" + "전화번호: " + item['RELAX_RSTRNT_TEL'])
 
 
-            elif self.entry.get() == "음식점 이름을 입력하세요":                #검색어가 없을 떄
+            elif self.entry.get() == "음식점 이름을 입력하세요" or self.entry.get() == '':                #검색어가 없을 떄
                 self.listbox.insert(n, item['RELAX_RSTRNT_NM'])
                 if item['RELAX_RSTRNT_TEL'] == None:
                     self.box2.append("\n\n주소: " + item['RELAX_ADD1'] + "\n\n" + "업종: " + item['RELAX_GUBUN_DETAIL'])
@@ -265,25 +301,6 @@ class GUI:
     def map(self):
         pass
 
-    def button(self):
-        #버튼
-        #검색버튼
-        self.button = tkinter.Button(self.window, text = '검색', command = self.search, width=10, height = 1, borderwidth= 5, )
-        self.button.place(x=430,y=50)
-        #초기화 버튼
-        self.button2 = tkinter.Button(self.window, text = '초기화', command = self.reset, width=8, height = 1, borderwidth= 5, )
-        self.button2.place(x=530,y=50)
-        #추천메뉴 버튼
-        self.button3 = tkinter.Button(self.window, text = '추천메뉴', command = self.recommand, width=30, height = 1, borderwidth= 5, )
-        self.button3.place(x=80,y=190)
-        #메일 버튼
-        self.button4 = tkinter.Button(self.window, text = '메일', command = self.mail, width=10, height = 1, borderwidth= 5, )
-        self.button4.place(x=370,y=190)
-        #지도 버튼
-        self.button5 = tkinter.Button(self.window, text = '지도', command = self.map, width=10, height = 1, borderwidth= 5, )
-        self.button5.place(x=470,y=190)
-        #결과리스트 출력버튼
-        self.button6 = tkinter.Button(self.window, text='->', command=self.listPrint, width=3, height=1, borderwidth=5, )
-        self.button6.place(x=340, y=420)
+
 
 GUI()
