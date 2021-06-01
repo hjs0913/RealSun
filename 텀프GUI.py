@@ -15,6 +15,15 @@ import urllib.request
 import http.client
 import time
 
+import threading
+import sys
+from tkinter import messagebox
+import folium
+from cefpython3 import cefpython as cef
+import webbrowser
+from geopy.geocoders import Nominatim
+
+
 import requests, xmltodict, json
 
 from PIL import Image, ImageTk
@@ -34,9 +43,10 @@ printCount= f.read().split()
 print(printCount)
 printCount = list(map(int, printCount))
 
-
-
-
+addressBox = []
+address = ''
+addressIndex = 0
+realAddress = ''
 class GUI:
     def __init__(self):
         self.window = tkinter.Tk()
@@ -254,6 +264,10 @@ class GUI:
 
     def search(self):
 
+        addressBox.clear()
+
+        address=''
+
         self.listbox.delete(0, 1000)
         self.text.delete(1.0, "end")
         url = 'http://211.237.50.150:7080/openapi/ffdc9d56e6e1acc99dc0304efc850b9764f5668bdc618eb00ecc3f52dcfe17c2/xml/Grid_20200713000000000605_1/1/1000'
@@ -291,17 +305,21 @@ class GUI:
                     self.listbox.insert(n, item['RELAX_RSTRNT_NM'])
                     if item['RELAX_RSTRNT_TEL'] == None:
                         self.box2.append("\n\n이름: " +item['RELAX_RSTRNT_NM'] + "\n\n주소: " + item['RELAX_ADD1'] + "\n\n" + "업종: " + item['RELAX_GUBUN_DETAIL'])
+                        addressBox.append(item['RELAX_ADD1'])
                     else:
                         self.box2.append("\n\n이름: " +item['RELAX_RSTRNT_NM'] + "\n\n주소: " + item['RELAX_ADD1'] + "\n\n" + "업종: " + item[
                             'RELAX_GUBUN_DETAIL'] + "\n\n" + "전화번호: " + item['RELAX_RSTRNT_TEL'])
+                        addressBox.append(item['RELAX_ADD1'])
                     n += 1
                 elif self.categoryValuesStr == '업종상세':
                     self.listbox.insert(n, item['RELAX_RSTRNT_NM'])
                     if item['RELAX_RSTRNT_TEL'] == None:
                         self.box2.append("\n\n이름: " +item['RELAX_RSTRNT_NM'] + "\n\n주소: " + item['RELAX_ADD1'] + "\n\n" + "업종: " + item['RELAX_GUBUN_DETAIL'])
+                        addressBox.append(item['RELAX_ADD1'])
                     else:
                         self.box2.append("\n\n이름: " +item['RELAX_RSTRNT_NM'] + "\n\n주소: " + item['RELAX_ADD1'] + "\n\n" + "업종: " + item[
                             'RELAX_GUBUN_DETAIL'] + "\n\n" + "전화번호: " + item['RELAX_RSTRNT_TEL'])
+                        addressBox.append(item['RELAX_ADD1'])
                     n += 1
 
             elif self.entry.get() == "음식점 이름을 입력하세요" or self.entry.get() == '':  # 검색어가 없을 떄
@@ -309,18 +327,22 @@ class GUI:
                     self.listbox.insert(n, item['RELAX_RSTRNT_NM'])
                     if item['RELAX_RSTRNT_TEL'] == None:
                         self.box2.append("\n\n이름: " +item['RELAX_RSTRNT_NM'] + "\n\n주소: " + item['RELAX_ADD1'] + "\n\n" + "업종: " + item['RELAX_GUBUN_DETAIL'])
+                        addressBox.append(item['RELAX_ADD1'])
                     else:
                         self.box2.append("\n\n이름: " +item['RELAX_RSTRNT_NM'] + "\n\n주소: " + item['RELAX_ADD1'] + "\n\n" + "업종: " + item[
                             'RELAX_GUBUN_DETAIL'] + "\n\n" + "전화번호: " + item['RELAX_RSTRNT_TEL'])
+                        addressBox.append(item['RELAX_ADD1'])
                     n += 1
 
                 elif self.categoryValuesStr == '업종상세':
                     self.listbox.insert(n, item['RELAX_RSTRNT_NM'])
                     if item['RELAX_RSTRNT_TEL'] == None:
                         self.box2.append("\n\n이름: " +item['RELAX_RSTRNT_NM'] + "\n\n주소: " + item['RELAX_ADD1'] + "\n\n" + "업종: " + item['RELAX_GUBUN_DETAIL'])
+                        addressBox.append(item['RELAX_ADD1'])
                     else:
                         self.box2.append("\n\n이름: " +item['RELAX_RSTRNT_NM'] + "\n\n주소: " + item['RELAX_ADD1'] + "\n\n" + "업종: " + item[
                             'RELAX_GUBUN_DETAIL'] + "\n\n" + "전화번호: " + item['RELAX_RSTRNT_TEL'])
+                        addressBox.append(item['RELAX_ADD1'])
                     n += 1
 
     def reset(self):
@@ -341,12 +363,17 @@ class GUI:
         self.listbox.delete(0, 1000)
         self.text.delete(1.0, "end")
 
+
     def listPrint(self):
         self.text.delete(1.0, "end")
         self.selection = self.listbox.curselection()
         self.index = self.selection[0]
         int(self.index)
         self.text.insert(1.0, self.box2[self.index])
+        addressIndex =  self.index
+        address = addressBox[addressIndex]
+        realAddress = address
+        print(realAddress)
 
         if "한식" in self.box2[self.index]:
             printCount[0] += 1
@@ -376,7 +403,6 @@ class GUI:
         wr.write(' ' + printCountstr[4])
         wr = open('recommandList.txt', 'a+t')
         wr.write(' ' + printCountstr[5])
-
 
 
     def recommand(self):
@@ -416,6 +442,7 @@ class GUI:
         self.session.quit()
 
     def graph(self):
+
         self.window2 = tkinter.Tk()
         self.window2.title("그래프")
         self.window2.geometry("640x570+600+50")  # 너비 x 높이  + 시작x + 시작y
@@ -451,8 +478,29 @@ class GUI:
 
 
     def map(self):
-         pass
+        selection = self.listbox.curselection()
+        index = selection[0]
+        int(index)
+
+        address = addressBox[index]
+        print(address)
+        app = Nominatim(user_agent='tutorial')
+        location = app.geocode(address, language='ko')
+
+        def showMap(frame):
+            sys.excepthook = cef.ExceptHook
+            window_info = cef.WindowInfo(frame.winfo_id())
+            window_info.SetAsChild(frame.winfo_id(), [0, 0, 800, 600])
+            cef.Initialize()
+            browser = cef.CreateBrowserSync(window_info, url='file:///map.html')
+            cef.MessageLoop()
 
 
+        # 지도 저장
+        m = folium.Map(location=[location.latitude, location.longitude], zoom_start=16)
+        folium.Marker([location.latitude, location.longitude]).add_to(m)
+        url = 'map.html'
+        m.save(url)
+        webbrowser.open(url)
 
 GUI()
