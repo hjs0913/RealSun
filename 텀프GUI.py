@@ -1,7 +1,8 @@
 from tkinter import *
 import tkinter.ttk
 from tkinter import font
-import random
+from random import *
+
 # 5/23 추가
 import urllib.request
 
@@ -406,8 +407,159 @@ class GUI:
 
 
     def recommand(self):
-        pass
+        addressBox.clear()
 
+        address = ''
+
+        self.listbox.delete(0, 1000)
+        self.text.delete(1.0, "end")
+        url = 'http://211.237.50.150:7080/openapi/ffdc9d56e6e1acc99dc0304efc850b9764f5668bdc618eb00ecc3f52dcfe17c2/xml/Grid_20200713000000000605_1/1/1000'
+
+        self.valuesStr = self.combo1.get()
+        self.detailValuesStr = self.combo2.get()
+        self.categoryValuesStr = self.combo3.get()
+
+        if (self.valuesStr != '시/도' and self.detailValuesStr == '시/군/구' and self.categoryValuesStr == '업종상세'):
+            parme = '?' + '&RELAX_SI_NM=' + self.valuesStr
+
+        elif (self.valuesStr != '시/도' and self.detailValuesStr != '시/군/구' and self.categoryValuesStr == '업종상세'):
+            parme = '?' + '&RELAX_SI_NM=' + self.valuesStr + '&RELAX_SIDO_NM=' + self.detailValuesStr
+
+
+        elif (self.valuesStr == '시/도' and self.detailValuesStr == '시/군/구' and self.categoryValuesStr == '업종상세'):
+            parme = ""
+
+        url = url + parme
+        content = requests.get(url).content
+        dic = xmltodict.parse(content)
+        jsonString = json.dumps(dic, ensure_ascii=False)
+        jsonObj = json.loads(jsonString)
+
+        n = 0
+        self.box2 = []
+        RECOMMENTdetail = printCount.index(min(printCount))
+
+        for item in jsonObj['Grid_20200713000000000605_1']['row']:
+            if self.entry.get() == "음식점 이름을 입력하세요" or self.entry.get() == '':  # 검색어가 없을 떄
+                if self.categoryValuesStr == '업종상세':
+                    if RECOMMENTdetail == 0:
+                        if item['RELAX_GUBUN_DETAIL'] == "한식":
+                            self.listbox.insert(n, item['RELAX_RSTRNT_NM'])
+                            n += 1
+                            if item['RELAX_RSTRNT_TEL'] == None:
+                                self.box2.append(
+                                "\n\n이름: " + item['RELAX_RSTRNT_NM'] + "\n\n주소: " + item['RELAX_ADD1'] + "\n\n" + "업종: " +
+                                item['RELAX_GUBUN_DETAIL'])
+                                addressBox.append(item['RELAX_ADD1'])
+                            else:
+                                self.box2.append(
+                                "\n\n이름: " + item['RELAX_RSTRNT_NM'] + "\n\n주소: " + item['RELAX_ADD1'] + "\n\n" + "업종: " +
+                                item[
+                                'RELAX_GUBUN_DETAIL'] + "\n\n" + "전화번호: " + item['RELAX_RSTRNT_TEL'])
+                                addressBox.append(item['RELAX_ADD1'])
+
+
+                    elif RECOMMENTdetail == 1:
+                        if item['RELAX_GUBUN_DETAIL'] == "중식":
+                            self.listbox.insert(n, item['RELAX_RSTRNT_NM'])
+                            n += 1
+                            if item['RELAX_RSTRNT_TEL'] == None:
+                                self.box2.append(
+                                "\n\n이름: " + item['RELAX_RSTRNT_NM'] + "\n\n주소: " + item['RELAX_ADD1'] + "\n\n" + "업종: " +
+                                item['RELAX_GUBUN_DETAIL'])
+                                addressBox.append(item['RELAX_ADD1'])
+                            else:
+                                self.box2.append(
+                                "\n\n이름: " + item['RELAX_RSTRNT_NM'] + "\n\n주소: " + item['RELAX_ADD1'] + "\n\n" + "업종: " +
+                                item[
+                                'RELAX_GUBUN_DETAIL'] + "\n\n" + "전화번호: " + item['RELAX_RSTRNT_TEL'])
+                                addressBox.append(item['RELAX_ADD1'])
+
+                    elif RECOMMENTdetail == 2:
+                        if item['RELAX_GUBUN_DETAIL'] == "일식":
+                            self.listbox.insert(n, item['RELAX_RSTRNT_NM'])
+                            n += 1
+                            if item['RELAX_RSTRNT_TEL'] == None:
+                                self.box2.append(
+                                "\n\n이름: " + item['RELAX_RSTRNT_NM'] + "\n\n주소: " + item['RELAX_ADD1'] + "\n\n" + "업종: " +
+                                item['RELAX_GUBUN_DETAIL'])
+                                addressBox.append(item['RELAX_ADD1'])
+                            else:
+                                self.box2.append(
+                                "\n\n이름: " + item['RELAX_RSTRNT_NM'] + "\n\n주소: " + item['RELAX_ADD1'] + "\n\n" + "업종: " +
+                                item[
+                                'RELAX_GUBUN_DETAIL'] + "\n\n" + "전화번호: " + item['RELAX_RSTRNT_TEL'])
+                                addressBox.append(item['RELAX_ADD1'])
+
+                    elif RECOMMENTdetail == 3:
+                        if item['RELAX_GUBUN_DETAIL'] == "서양식":
+                            self.listbox.insert(n, item['RELAX_RSTRNT_NM'])
+                            n += 1
+
+                            if item['RELAX_RSTRNT_TEL'] == None:
+                                self.box2.append(
+                                    "\n\n이름: " + item['RELAX_RSTRNT_NM'] + "\n\n주소: " + item[
+                                        'RELAX_ADD1'] + "\n\n" + "업종: " +
+                                    item['RELAX_GUBUN_DETAIL'])
+                                addressBox.append(item['RELAX_ADD1'])
+                            else:
+                                self.box2.append(
+                                    "\n\n이름: " + item['RELAX_RSTRNT_NM'] + "\n\n주소: " + item[
+                                        'RELAX_ADD1'] + "\n\n" + "업종: " +
+                                    item[
+                                        'RELAX_GUBUN_DETAIL'] + "\n\n" + "전화번호: " + item['RELAX_RSTRNT_TEL'])
+                                addressBox.append(item['RELAX_ADD1'])
+
+                    elif RECOMMENTdetail == 4:
+                        if item['RELAX_GUBUN_DETAIL'] == "기타외국식":
+                            self.listbox.insert(n, item['RELAX_RSTRNT_NM'])
+                            n += 1
+                            if item['RELAX_RSTRNT_TEL'] == None:
+                                self.box2.append(
+                                    "\n\n이름: " + item['RELAX_RSTRNT_NM'] + "\n\n주소: " + item[
+                                        'RELAX_ADD1'] + "\n\n" + "업종: " +
+                                    item['RELAX_GUBUN_DETAIL'])
+                                addressBox.append(item['RELAX_ADD1'])
+                            else:
+                                self.box2.append(
+                                    "\n\n이름: " + item['RELAX_RSTRNT_NM'] + "\n\n주소: " + item[
+                                        'RELAX_ADD1'] + "\n\n" + "업종: " +
+                                    item[
+                                        'RELAX_GUBUN_DETAIL'] + "\n\n" + "전화번호: " + item['RELAX_RSTRNT_TEL'])
+                                addressBox.append(item['RELAX_ADD1'])
+
+                    elif RECOMMENTdetail == 5:
+                        if item['RELAX_GUBUN_DETAIL'] == "기타 음식점업":
+                            self.listbox.insert(n, item['RELAX_RSTRNT_NM'])
+                            n += 1
+                            if item['RELAX_RSTRNT_TEL'] == None:
+                                self.box2.append(
+                                    "\n\n이름: " + item['RELAX_RSTRNT_NM'] + "\n\n주소: " + item[
+                                            'RELAX_ADD1'] + "\n\n" + "업종: " +
+                                    item['RELAX_GUBUN_DETAIL'])
+                                addressBox.append(item['RELAX_ADD1'])
+                            else:
+                                self.box2.append(
+                                    "\n\n이름: " + item['RELAX_RSTRNT_NM'] + "\n\n주소: " + item[
+                                            'RELAX_ADD1'] + "\n\n" + "업종: " +
+                                    item[
+                                        'RELAX_GUBUN_DETAIL'] + "\n\n" + "전화번호: " + item['RELAX_RSTRNT_TEL'])
+                                addressBox.append(item['RELAX_ADD1'])
+
+
+        recommandIndex = randint(0,n)
+
+        recommandName = self.listbox.get(recommandIndex,recommandIndex)
+        recommandResult = self.box2[recommandIndex]
+        recommandAddress = addressBox[recommandIndex]
+
+
+        self.listbox.delete(0,n)
+        self.listbox.insert(recommandIndex, recommandName)
+        self.box2.clear()
+        self.box2.append(recommandResult)
+        addressBox.clear()
+        addressBox.append(recommandAddress)
 
     def mail(self):#메일 보내기 메뉴 열고 메일 입력에 사용
 
@@ -487,13 +639,13 @@ class GUI:
         app = Nominatim(user_agent='tutorial')
         location = app.geocode(address, language='ko')
 
-        def showMap(frame):
-            sys.excepthook = cef.ExceptHook
-            window_info = cef.WindowInfo(frame.winfo_id())
-            window_info.SetAsChild(frame.winfo_id(), [0, 0, 800, 600])
-            cef.Initialize()
-            browser = cef.CreateBrowserSync(window_info, url='file:///map.html')
-            cef.MessageLoop()
+        #def showMap(frame):
+         #   sys.excepthook = cef.ExceptHook
+          #  window_info = cef.WindowInfo(frame.winfo_id())
+           # window_info.SetAsChild(frame.winfo_id(), [0, 0, 800, 600])
+            #cef.Initialize()
+            #browser = cef.CreateBrowserSync(window_info, url='file:///map.html')
+            #cef.MessageLoop()
 
 
         # 지도 저장
