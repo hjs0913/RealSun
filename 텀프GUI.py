@@ -82,9 +82,7 @@ class GUI:
         self.entry = tkinter.Entry(self.window, width=26, borderwidth=10, font=("TkDefaultFont", 14), bg='mint cream')
         self.entry.insert(0, "음식점 이름을 입력하세요")
         self.entry.place(x=140, y=80)
-        # self.entry.bind("<Enter>", lambda e: self.entry.delete(0, END), self.entry.insert(0, ''))
         self.entry.bind("<Button-1>", lambda e: self.entry.delete(0, END))
-        # self.entry.bind("<Leave>", lambda e: self.entry.insert(0, '음식점 이름을 입력하세요'))
 
     def button(self):
         # 버튼
