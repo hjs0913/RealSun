@@ -32,7 +32,10 @@ from PIL import Image, ImageTk
 import smtplib
 
 from email.mime.text import MIMEText
-
+import telepot
+from pprint import pprint
+import teller
+import noti
 
 
 printCount = []
@@ -117,7 +120,7 @@ class GUI:
         img3 = Image.open('image\\telegram.png')
         img3 = img3.resize((30, 30), Image.ANTIALIAS)
         self.telegramIcon = ImageTk.PhotoImage(img3)
-        self.button5 = tkinter.Button(self.window, text='텔레그램', command=self.map, width=30, height=30, borderwidth=3,
+        self.button5 = tkinter.Button(self.window, text='텔레그램', command= self.telegram, width=30, height=30, borderwidth=3,
                                       image=self.telegramIcon, bg='light yellow')
         self.button5.place(x=560, y=190)
         # 결과리스트 출력버튼
@@ -300,8 +303,7 @@ class GUI:
 
         for item in jsonObj['Grid_20200713000000000605_1']['row']:
             # print(self.categoryValuesStr)
-            if item[
-                'RELAX_RSTRNT_NM'] == self.entry.get() and self.entry.get() != "음식점 이름을 입력하세요":  # 검색어가 있고 같은 이름의 식당이 있을 떄
+            if item['RELAX_RSTRNT_NM'] == self.entry.get() and self.entry.get() != "음식점 이름을 입력하세요":  # 검색어가 있고 같은 이름의 식당이 있을 떄
                 if item['RELAX_GUBUN_DETAIL'] == self.categoryValuesStr:
                     self.listbox.insert(n, item['RELAX_RSTRNT_NM'])
                     if item['RELAX_RSTRNT_TEL'] == None:
@@ -585,13 +587,19 @@ class GUI:
                                      bg='white')
         self.button7.place(x=100, y=150)
 
-
-
     def sendMail(self):     #메일 보내기 버튼에 사용
         self.accept = self.entry2.get()
         print(self.accept)
         self.session.sendmail("dmlqja123@gmail.com", self.accept, self.msg.as_string())
         self.session.quit()
+
+    def telegram(self):
+        bot = teller.telepot.Bot(noti.TOKEN)
+        noti.sendMessage(1766332140, '시/도 시/군/구 를 입력하세요.\n(ex) 경기도 시흥시')
+        bot.message_loop(teller.handle)
+        pprint(bot.getMe())
+        print('Listening...')
+
 
     def graph(self):
 
@@ -626,7 +634,7 @@ class GUI:
 
             self.canvas.create_rectangle(20 + i * self.barWidth, 570 - 50 - 10 * printCount[i],
                                     20 + (i + 1) * self.barWidth, 570 - 50, fill = self.color)
-            self.canvas.create_text(20 + i * self.barWidth + 10, 570 - 10, text= self.Gtext  + str(printCount[i]) )
+            self.canvas.create_text(20 + i * self.barWidth + 50, 570 - 40, text= self.Gtext  + str(printCount[i]) )
 
 
     def map(self):
